@@ -1,0 +1,7 @@
+{
+  "name": "create-react-ui",
+  "version": "0.0.1",
+  "description": "create react component ui",
+  "main": "index.js",
+  "license": "MIT"
+}
