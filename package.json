@@ -2,6 +2,30 @@
   "name": "create-react-ui",
   "version": "0.0.1",
   "description": "create react component ui",
-  "main": "index.js",
-  "license": "MIT"
+  "bin": {
+    "create-react-ui": "./index.js"
+  },
+  "author": "soberz <710411486@qq.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/YSMJ1994/create-react-ui",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YSMJ1994/create-react-ui"
+  },
+  "keywords": [
+    "create-react-ui",
+    "react",
+    "component",
+    "ui",
+    "library"
+  ],
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "cli-spinner": "^0.2.10",
+    "cli-step": "^1.0.2",
+    "commander": "^3.0.1",
+    "download-git-repo": "^2.0.0",
+    "fs-extra": "^8.1.0",
+    "inquirer": "^7.0.0"
+  }
 }
