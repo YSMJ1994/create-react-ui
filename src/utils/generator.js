@@ -20,14 +20,8 @@ function downloadFromGithub(owner, name, dest) {
 }
 
 const tempProjects = {
-	ts: {
-		scss: 'react-ui-temp-ts',
-		less: ''
-	},
-	js: {
-		scss: 'react-ui-temp-js',
-		less: ''
-	}
+	ts: 'react-ui-temp-ts',
+	js: 'react-ui-temp-js'
 };
 
 async function generator({ name, ts, preprocessor, pkg }) {
@@ -64,8 +58,8 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	const spin = new Spinner('downloading... ');
 	spin.setSpinnerString(18);
 	spin.start();
-	let tempName = tempProjects[ts ? 'ts' : 'js'][preprocessor];
-
+	let tempName = tempProjects[ts ? 'ts' : 'js'];
+	
 	// 下载模板项目至目标目录
 	await downloadFromGithub(owner, tempName, targetDir);
 	spin.stop(true);
