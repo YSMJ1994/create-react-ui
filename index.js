@@ -9,25 +9,31 @@ const generator = require('./src/utils/generator');
 let config = {
 	name: '',
 	enableBabelImport: '',
-	ts: false,
+	ts: '',
 	preprocessor: '',
 	pkg: ''
 };
+process.on("unhandledRejection", err => {
+	throw err;
+});
 program
 	.name(pkg.name)
 	.version(pkg.version)
 	.arguments('[projectName]')
 	.option('-t, --typescript', 'enable typescript', function() {
-		config.enabledTs = true;
+		config.ts = true;
 	})
-	.option('-p, --preprocessor [preprocessor]', 'css preprocessor. (todo...)', function(cssPre) {
+	.option('-p, --preprocessor [preprocessor]', 'css preprocessor [sass | scss | less]', function(cssPre) {
+		if(cssPre && !/^(less|sass|scss)$/.test(cssPre)) {
+			console.log(chalk.red('css preprocessor just supported "sass"、"scss" or "less"'));
+			process.exit(-1);
+		}
 		config.preprocessor = cssPre;
 	})
-
 	.option('-g, --package [package]', 'package manager [yarn | npm]', function(pkg) {
 		console.log('pkg', pkg);
 		if (pkg && pkg !== 'yarn' && pkg !== 'npm') {
-			console.log(chalk.red('package must be "yarn" or "npm"'));
+			console.log(chalk.red('package just supported "yarn" or "npm"'));
 			process.exit(-1);
 		}
 		config.pkg = pkg;
@@ -60,9 +66,11 @@ async function execute(projectName) {
 			]
 		});
 	}
-	if(!config.enableBabelImport && typeof config.enableBabelImport === 'string') {
+	if(config.ts === '') {
+		config.ts = await question('enable typescript?', 'confirm');
+	} 
+	if(config.enableBabelImport === '') {
 		config.enableBabelImport = await question('enable babel-plugin-import supported generated outputs?', 'confirm');
-		console.log('config.enableBabelImport', config.enableBabelImport);
 	} 
 	if (!config.pkg) {
 		config.pkg = await question('package manager?', 'list', {
