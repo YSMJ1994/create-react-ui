@@ -8,6 +8,7 @@ const question = require('./src/utils/question');
 const generator = require('./src/utils/generator');
 let config = {
 	name: '',
+	enableBabelImport: '',
 	ts: false,
 	preprocessor: '',
 	pkg: ''
@@ -39,8 +40,8 @@ async function execute(projectName) {
 	if (!config.name) {
 		config.name = await question('project name?', 'input');
 	}
-	if(!/^[a-z\-_]+$/.test(config.name)) {
-		console.error(`Project names can only be composed of lowercase letters or -_`)
+	if(!/^[a-z\-_@/]+$/.test(config.name)) {
+		console.error(`Project names can only be composed of lowercase letters or -_@/`)
 		config.name = '';
 		await execute()
 		return 
@@ -59,6 +60,10 @@ async function execute(projectName) {
 			]
 		});
 	}
+	if(!config.enableBabelImport && typeof config.enableBabelImport === 'string') {
+		config.enableBabelImport = await question('enable babel-plugin-import supported generated outputs?', 'confirm');
+		console.log('config.enableBabelImport', config.enableBabelImport);
+	} 
 	if (!config.pkg) {
 		config.pkg = await question('package manager?', 'list', {
 			choices: [
@@ -77,29 +82,9 @@ async function execute(projectName) {
 	console.log('Creating a new React Component Library in ', chalk.green(targetDir), '.');
 	console.log();
 	console.log('config', chalk.green('css preprocessor'), ': ', config.preprocessor);
+	console.log('config', chalk.green('babel-plugin-import outputs support'), ': ', config.enableBabelImport ? 'enabled' : 'disabled');
 	console.log('config', chalk.green('package manager'), ': ', config.pkg);
 	console.log('config', chalk.green('typescript'), ': ', config.ts ? 'enabled' : 'disabled');
-	// 生成cru.config.js配置文件
-	const configPath = path.resolve(targetDir, 'cru.config.js');
-	const configContent = `module.exports = {
-  output: {
-    doc: 'build-doc',
-    library: 'build-library'
-  },
-  static: {
-    doc: 'public',
-    library: 'libraryStatic',
-  },
-  src: {
-    doc: 'doc',
-    library: 'components'
-  },
-  cssPreprocessor: ${JSON.stringify(config.preprocessor)},
-  typescript: ${JSON.stringify(config.ts)},
-  pkg: ${JSON.stringify(config.pkg)}
-}\n`;
-	await fs.writeFile(configPath, configContent);
-	console.log(`generate cru config file success: [ ${chalk.green(configPath)} ]`);
 	console.log();
 	await generator(config);
 }

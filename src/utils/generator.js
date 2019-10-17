@@ -38,6 +38,28 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	} else {
 		fs.ensureDirSync(targetDir);
 	}
+	// 生成cru.config.js配置文件
+	const configPath = path.resolve(targetDir, 'cru.config.js');
+	const configContent = `module.exports = {
+  output: {
+    doc: 'build-doc',
+    library: 'build-library'
+  },
+  static: {
+    doc: 'public',
+    library: 'libraryStatic',
+  },
+  src: {
+    doc: 'doc',
+    library: 'components'
+  },
+  enableBabelImport: true,
+  cssPreprocessor: ${JSON.stringify(preprocessor)},
+  typescript: ${JSON.stringify(ts)},
+  pkg: ${JSON.stringify(pkg)}
+}\n`;
+	await fs.writeFile(configPath, configContent);
+	console.log(`generate cru config file success: [ ${chalk.green(configPath)} ]`);
 	console.log('Installing packages. This might take a couple of minutes.');
 	const spin = new Spinner('downloading... ');
 	spin.setSpinnerString(18);
