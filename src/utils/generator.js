@@ -38,6 +38,12 @@ async function resolveDemoName(targetDir, name) {
 	}
 }
 
+async function copyReadme(targetDir) {
+	const src = path.resolve(__dirname, '../../project_readme.md');
+	const dest = path.resolve(targetDir, 'README.md');
+	await fs.copy(src, dest)
+}
+
 async function generator({ name, ts, preprocessor, pkg }) {
 	const targetDir = path.resolve(process.cwd(), name);
 	if (fs.existsSync(targetDir)) {
@@ -81,6 +87,8 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	console.log(chalk.green('download success！'));
 	// 修改demos中库别名的引用
 	await resolveDemoName(targetDir, name);
+	// 复制readme
+	await copyReadme(targetDir);
 	console.log();
 	execSync(`cd ${name} && ${pkg} install`, {
 		stdio: 'inherit'
