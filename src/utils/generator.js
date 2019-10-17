@@ -24,6 +24,20 @@ const tempProjects = {
 	js: 'react-ui-temp-js'
 };
 
+async function resolveDemoName(targetDir, name) {
+	const demoDir = path.resolve(targetDir, 'components/Button/demo');
+	if(!fs.existsSync(demoDir)) {
+		return 
+	}
+	const children = await fs.readdir(demoDir)
+	for(let i = 0, len = children.length; i < len; i++) {
+		const childPath = path.resolve(demoDir, children[i])
+		let content = await fs.readFile(childPath, 'utf-8');
+		content = content.replace(/unknown/g, name);
+		await fs.writeFile(childPath, content);
+	}
+}
+
 async function generator({ name, ts, preprocessor, pkg }) {
 	const targetDir = path.resolve(process.cwd(), name);
 	if (fs.existsSync(targetDir)) {
@@ -65,6 +79,8 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	await downloadFromGithub(owner, tempName, targetDir);
 	spin.stop(true);
 	console.log(chalk.green('download success！'));
+	// 修改demos中库别名的引用
+	await resolveDemoName(targetDir, name);
 	console.log();
 	execSync(`cd ${name} && ${pkg} install`, {
 		stdio: 'inherit'
