@@ -46,8 +46,8 @@ async function execute(projectName) {
 	if (!config.name) {
 		config.name = await question('project name?', 'input');
 	}
-	if(!/^[a-z\-_@/]+$/.test(config.name)) {
-		console.error(`Project names can only be composed of lowercase letters or -_@/`)
+	if(!/^[a-z\-_@]+$/.test(config.name)) {
+		console.error(`Project names can only be composed of lowercase letters or -_@`)
 		config.name = '';
 		await execute()
 		return 
@@ -93,6 +93,5 @@ async function execute(projectName) {
 	console.log('config', chalk.green('babel-plugin-import outputs support'), ': ', config.enableBabelImport ? 'enabled' : 'disabled');
 	console.log('config', chalk.green('package manager'), ': ', config.pkg);
 	console.log('config', chalk.green('typescript'), ': ', config.ts ? 'enabled' : 'disabled');
-	console.log();
 	await generator(config);
 }

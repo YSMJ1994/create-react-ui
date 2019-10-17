@@ -54,6 +54,7 @@ async function generator({ name, ts, preprocessor, pkg }) {
 }\n`;
 	await fs.writeFile(configPath, configContent);
 	console.log(`generate cru config file success: [ ${chalk.green(configPath)} ]`);
+	console.log();
 	console.log('Installing packages. This might take a couple of minutes.');
 	const spin = new Spinner('downloading... ');
 	spin.setSpinnerString(18);
