@@ -77,10 +77,10 @@ my-app
 
 ```
 
-No configuration or complicated folder structures, just the files you need to build your app.<br> Once the installation is done, you can open your project folder:
+Once the installation is done, you can open your project folder:
 
 ```sh
-cd my-app
+cd my_library_app
 ```
 
 Inside the newly created project, you can run some built-in commands:
