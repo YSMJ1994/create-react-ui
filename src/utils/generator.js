@@ -26,12 +26,12 @@ const tempProjects = {
 
 async function resolveDemoName(targetDir, name) {
 	const demoDir = path.resolve(targetDir, 'components/Button/demo');
-	if(!fs.existsSync(demoDir)) {
-		return 
+	if (!fs.existsSync(demoDir)) {
+		return;
 	}
-	const children = await fs.readdir(demoDir)
-	for(let i = 0, len = children.length; i < len; i++) {
-		const childPath = path.resolve(demoDir, children[i])
+	const children = await fs.readdir(demoDir);
+	for (let i = 0, len = children.length; i < len; i++) {
+		const childPath = path.resolve(demoDir, children[i]);
 		let content = await fs.readFile(childPath, 'utf-8');
 		content = content.replace(/unknown/g, name);
 		await fs.writeFile(childPath, content);
@@ -41,7 +41,7 @@ async function resolveDemoName(targetDir, name) {
 async function copyReadme(targetDir) {
 	const src = path.resolve(__dirname, '../../project_readme.md');
 	const dest = path.resolve(targetDir, 'README.md');
-	await fs.copy(src, dest)
+	await fs.copy(src, dest);
 }
 
 async function generator({ name, ts, preprocessor, pkg }) {
@@ -80,7 +80,7 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	spin.setSpinnerString(18);
 	spin.start();
 	let tempName = tempProjects[ts ? 'ts' : 'js'];
-	
+
 	// 下载模板项目至目标目录
 	await downloadFromGithub(owner, tempName, targetDir);
 	spin.stop(true);
@@ -102,6 +102,18 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	const targetPkg = require(targetPkgPath);
 	targetPkg.name = name;
 	await fs.writeJSON(targetPkgPath, targetPkg, { spaces: 2 });
+	// 修改tsconfig.json
+	const targetTsConfigPath = path.resolve(targetDir, 'tsconfig.json')
+	if (ts && fs.existsSync(targetTsConfigPath)) {
+		const config = require(targetTsConfigPath);
+		config.compilerOptions.paths = {
+			'toolSrc/*': ['node_modules/react-ui-scripts/src/*'],
+			'components/*': ['./components/*'],
+			[name]: ['node_modules/react-ui-scripts/assets/components/comps.js'],
+			[`${name}/*`]: ['./components/*']
+		};
+		await fs.writeJSON(targetTsConfigPath, config, { spaces: 2 });
+	}
 	console.log(`Success! Created ${name} at ${targetDir}`);
 	console.log('Inside that directory, you can run several commands:');
 	console.log();
