@@ -101,6 +101,7 @@ async function generator({ name, ts, preprocessor, pkg }) {
 	const targetPkgPath = path.resolve(targetDir, 'package.json');
 	const targetPkg = require(targetPkgPath);
 	targetPkg.name = name;
+	Reflect.deleteProperty(targetPkg, 'private');
 	await fs.writeJSON(targetPkgPath, targetPkg, { spaces: 2 });
 	// 修改tsconfig.json
 	const targetTsConfigPath = path.resolve(targetDir, 'tsconfig.json')
